@@ -1,0 +1,47 @@
+class NormalCab extends Driver {
+    NormalCab(String license, int waitTime) {
+        super(license, waitTime);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s (%d mins away) NormalCab", 
+                super.getLicense(), super.getWaitTime());
+    }
+
+    @Override
+    double getBest(Request r) {
+        double svc1 = Double.valueOf(r.computeFare(new JustRide()));
+        double svc2 = Double.valueOf(r.computeFare(new TakeACab()));
+        return (svc1 < svc2 ? svc1 : svc2);
+    }
+
+    @Override
+    String getChoice(Request r) {
+        double svc1 = Double.valueOf(r.computeFare(new JustRide()));
+        double svc2 = Double.valueOf(r.computeFare(new TakeACab()));
+        if (svc1 < svc2) {
+            return String.format("$%.2f using %s (JustRide)", svc1 / 100, this.toString());
+        } else {
+            return String.format("$%.2f using %s (TakeACab)", svc2 / 100, this.toString());
+        }
+    }
+
+    int getWaitTime() {
+        return super.getWaitTime();
+    }
+
+    ImList<Double> allBookingsCost(Request r) {
+        double svc1 = r.computeFare(new JustRide());
+        double svc2 = r.computeFare(new TakeACab());
+        return new ImList<Double>().add(svc1).add(svc2);
+    }
+
+    ImList<String> allBookingsString(Request r) {
+        double svc1 = r.computeFare(new JustRide());
+        double svc2 = r.computeFare(new TakeACab());
+        String s1 = String.format("$%.2f using %s (JustRide)", svc1 / 100, this.toString());
+        String s2 = String.format("$%.2f using %s (TakeACab)", svc2 / 100, this.toString());
+        return new ImList<String>().add(s1).add(s2);
+    }
+}
